@@ -6,6 +6,7 @@ const userTypeDefs = gql`
     email: String!
     lastName: String!
     firstName: String!
+    password: String!
   }
 
   type Post {
@@ -16,8 +17,27 @@ const userTypeDefs = gql`
     authorId: String!
   }
 
+  type CreateUserResponse {
+    id: String!
+    email: String!
+    lastName: String!
+    firstName: String!
+    posts: [Post]!
+  }
+
+  input RegisterUserInput {
+    email: String!
+    lastName: String!
+    firstName: String!
+    password: String!
+  }
+
   type Query {
-    user(id: String!): User
+    user(email: String!): User!
+  }
+
+  type Mutation {
+    registerUser(input: RegisterUserInput!): User!
   }
 `;
 
