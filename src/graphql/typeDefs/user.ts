@@ -17,12 +17,21 @@ const userTypeDefs = gql`
     authorId: String!
   }
 
-  type CreateUserResponse {
+  type RegisterUserResponse {
     id: String!
     email: String!
     lastName: String!
     firstName: String!
     posts: [Post]!
+  }
+
+  type LoginUserResponse {
+    accessToken: String!
+    refreshToken: String!
+  }
+
+  type DeleteAccountResponse {
+    success: Boolean!
   }
 
   input RegisterUserInput {
@@ -32,12 +41,19 @@ const userTypeDefs = gql`
     password: String!
   }
 
+  input LoginUserInput {
+    email: String!
+    password: String!
+  }
+
   type Query {
     user(email: String!): User!
   }
 
   type Mutation {
-    registerUser(input: RegisterUserInput!): User!
+    register(input: RegisterUserInput!): RegisterUserResponse!
+    login(input: LoginUserInput!): LoginUserResponse!
+    deleteAccount: DeleteAccountResponse!
   }
 `;
 

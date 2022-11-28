@@ -5,5 +5,25 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
-  posts: Post[];
+  posts?: Post[];
+};
+
+export type RegisterUserInput = {
+  input: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  };
+};
+
+export type LoginUserInput = {
+  input: {
+    email: string;
+    password: string;
+  };
+};
+
+export type LoginUserResponse = {
+  accessToken: string;
 };
