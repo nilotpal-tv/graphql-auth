@@ -6,6 +6,7 @@ import {
   LoginUserInput,
   LoginUserResponse,
   RegisterUserInput,
+  UpdateUserInput,
   User,
 } from '../../types/user';
 
@@ -82,6 +83,21 @@ const userResolver = {
       if (!user) throw new AuthenticationError('You must log in.');
       await prisma.user.delete({ where: { id: user.id } });
       return { success: true };
+    },
+
+    updateInfo: async (
+      _: any,
+      { input }: UpdateUserInput,
+      { user, prisma }: GraphQLContext
+    ): Promise<User> => {
+      if (!user) throw new AuthenticationError('You must log in.');
+
+      const updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: { ...input },
+      });
+
+      return updatedUser;
     },
   },
 };

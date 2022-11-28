@@ -46,6 +46,11 @@ const userTypeDefs = gql`
     password: String!
   }
 
+  input UpdateInfoUserInput {
+    firstName: String
+    lastName: String
+  }
+
   type Query {
     user(email: String!): User!
   }
@@ -54,6 +59,7 @@ const userTypeDefs = gql`
     register(input: RegisterUserInput!): RegisterUserResponse!
     login(input: LoginUserInput!): LoginUserResponse!
     deleteAccount: DeleteAccountResponse!
+    updateInfo(input: UpdateInfoUserInput!): RegisterUserResponse
   }
 `;
 

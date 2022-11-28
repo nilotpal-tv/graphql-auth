@@ -24,6 +24,13 @@ export type LoginUserInput = {
   };
 };
 
+export type UpdateUserInput = {
+  input: {
+    firstName: string;
+    lastName: string;
+  };
+};
+
 export type LoginUserResponse = {
   accessToken: string;
 };
