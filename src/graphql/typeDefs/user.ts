@@ -26,8 +26,7 @@ const userTypeDefs = gql`
   }
 
   type LoginUserResponse {
-    accessToken: String!
-    refreshToken: String!
+    token: String!
   }
 
   type DeleteAccountResponse {

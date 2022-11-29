@@ -30,7 +30,3 @@ export type UpdateUserInput = {
     lastName: string;
   };
 };
-
-export type LoginUserResponse = {
-  accessToken: string;
-};

@@ -10,11 +10,10 @@ const authMiddleware = async (
 ): Promise<GraphQLContext> => {
   const { req } = context;
   const Bearer = req.headers.authorization;
-  const token = Bearer.split(' ')[1];
-
-  if (!token) return { prisma, user: null };
+  if (!Bearer) return { prisma, user: null };
 
   try {
+    const token = Bearer.split(' ')[1];
     const payload = verifyToken(token);
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },
