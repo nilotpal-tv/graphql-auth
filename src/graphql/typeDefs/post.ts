@@ -26,13 +26,20 @@ const postTypeDefs = gql`
     body: String!
   }
 
+  input UpdatePostInput {
+    id: String!
+    body: String!
+  }
+
   type Query {
-    post(id: String!): Post
-    posts: [Post]
+    postById(id: String!): Post
+    postsByText(text: String!): [Post]!
+    posts: [Post]!
   }
 
   type Mutation {
     createPost(input: CreatePostInput!): Post!
+    updatePost(input: UpdatePostInput!): Post!
   }
 `;
 

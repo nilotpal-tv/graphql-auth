@@ -14,3 +14,10 @@ export type CreatePostInput = {
     body: string;
   };
 };
+
+export type UpdatePostInput = {
+  input: {
+    body: string;
+    id: string;
+  };
+};
