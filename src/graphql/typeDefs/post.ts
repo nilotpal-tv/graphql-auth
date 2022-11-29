@@ -6,7 +6,14 @@ const postTypeDefs = gql`
     slug: String!
     title: String!
     body: String!
-    authorId: String!
+    author: User!
+  }
+
+  type User {
+    id: String!
+    email: String!
+    lastName: String!
+    firstName: String!
   }
 
   type Query {
@@ -15,10 +22,13 @@ const postTypeDefs = gql`
   }
 
   input CreatePostInput {
-    slug: String!
     title: String!
     body: String!
-    authorId: String!
+  }
+
+  type Query {
+    post(id: String!): Post
+    posts: [Post]
   }
 
   type Mutation {

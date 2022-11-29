@@ -4,7 +4,6 @@ import { generateTokens } from '../../lib/jwt';
 import GraphQLContext from '../../types/context';
 import {
   LoginUserInput,
-  LoginUserResponse,
   RegisterUserInput,
   UpdateUserInput,
   User,
@@ -52,7 +51,7 @@ const userResolver = {
       _: any,
       { input }: LoginUserInput,
       { prisma }: GraphQLContext
-    ): Promise<LoginUserResponse> => {
+    ): Promise<{ token: string }> => {
       const { email, password } = input;
 
       if (!email || !password)
@@ -65,14 +64,14 @@ const userResolver = {
       if (!isMatchPassword)
         throw new AuthenticationError('Invalid email or password.');
 
-      const accessToken = generateTokens({
+      const token = generateTokens({
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
         userId: user.id,
       });
 
-      return { accessToken };
+      return { token };
     },
 
     deleteAccount: async (

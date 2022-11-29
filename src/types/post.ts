@@ -7,3 +7,10 @@ export type Post = {
   body: string;
   author: User;
 };
+
+export type CreatePostInput = {
+  input: {
+    title: string;
+    body: string;
+  };
+};
