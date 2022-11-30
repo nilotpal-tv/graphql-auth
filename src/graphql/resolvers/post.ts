@@ -33,7 +33,7 @@ const postResolver = {
       { prisma }: GraphQLContext
     ) => {
       const post = await prisma.post.findMany({
-        where: { title: { contains: text } },
+        where: { title: { contains: text, mode: 'insensitive' } },
         include: { author: true },
       });
       return post;
