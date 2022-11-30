@@ -19,7 +19,7 @@ const postResolver = {
         where: { id },
         include: { author: true },
       });
-      return post;
+      return post as Post;
     },
 
     postsByText: async (
@@ -93,17 +93,17 @@ const postResolver = {
         });
 
         if (!post) throw new ApolloError("Post doesn't exist.", '404');
-        if (post.author.id.toString() === user.id.toString())
+        if (post.authorId.toString() !== user.id.toString())
           throw new ApolloError("You can't update other user's post.", '400');
 
         const updatedPost = await prisma.post.update({
           where: { id: post.id },
           data: { body: input.body },
+          include: { author: true },
         });
 
         return updatedPost;
       } catch (error) {
-        console.log(error.message);
         throw new ApolloError(error.message);
       }
     },
