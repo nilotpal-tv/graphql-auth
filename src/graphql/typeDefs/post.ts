@@ -26,9 +26,17 @@ const postTypeDefs = gql`
     body: String!
   }
 
+  type DeletePostResponse {
+    success: Boolean!
+  }
+
   input UpdatePostInput {
     id: String!
     body: String!
+  }
+
+  input DeletePostInput {
+    id: String!
   }
 
   type Query {
@@ -40,6 +48,7 @@ const postTypeDefs = gql`
   type Mutation {
     createPost(input: CreatePostInput!): Post!
     updatePost(input: UpdatePostInput!): Post!
+    deletePost(input: DeletePostInput!): DeletePostResponse!
   }
 `;
 

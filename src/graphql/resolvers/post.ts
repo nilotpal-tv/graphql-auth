@@ -3,7 +3,12 @@ import isObjectID from 'bson-objectid';
 import slug from 'slug';
 import { v4 as uuid } from 'uuid';
 import GraphQLContext from '../../types/context';
-import { CreatePostInput, Post, UpdatePostInput } from '../../types/post';
+import {
+  CreatePostInput,
+  DeletePostInput,
+  Post,
+  UpdatePostInput,
+} from '../../types/post';
 
 const postResolver = {
   Query: {
@@ -103,6 +108,30 @@ const postResolver = {
         });
 
         return updatedPost;
+      } catch (error) {
+        throw new ApolloError(error.message);
+      }
+    },
+
+    deletePost: async (
+      _: any,
+      { input }: DeletePostInput,
+      { user, prisma }: GraphQLContext
+    ) => {
+      if (!user) throw new AuthenticationError('You must login.');
+
+      if (!isObjectID.isValid(input.id))
+        throw new ApolloError('Invalid post id.');
+
+      try {
+        const post = await prisma.post.findUnique({ where: { id: input.id } });
+        if (!post) throw new ApolloError("Post doesn't exist.", '404');
+
+        if (post.authorId.toString() !== user.id.toString())
+          throw new ApolloError("You can't delete other user's post.", '400');
+
+        await prisma.post.delete({ where: { id: input.id } });
+        return { success: true };
       } catch (error) {
         throw new ApolloError(error.message);
       }

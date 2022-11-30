@@ -21,3 +21,9 @@ export type UpdatePostInput = {
     id: string;
   };
 };
+
+export type DeletePostInput = {
+  input: {
+    id: string;
+  };
+};
