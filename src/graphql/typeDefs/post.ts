@@ -50,6 +50,10 @@ const postTypeDefs = gql`
     updatePost(input: UpdatePostInput!): Post!
     deletePost(input: DeletePostInput!): DeletePostResponse!
   }
+
+  type Subscription {
+    postCreated: Post
+  }
 `;
 
 export default postTypeDefs;

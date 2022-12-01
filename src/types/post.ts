@@ -27,3 +27,5 @@ export type DeletePostInput = {
     id: string;
   };
 };
+
+export const NEW_POST = 'NEW_POST';

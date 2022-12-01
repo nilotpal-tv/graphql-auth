@@ -6,9 +6,13 @@ import GraphQLContext from '../../types/context';
 import {
   CreatePostInput,
   DeletePostInput,
+  NEW_POST,
   Post,
   UpdatePostInput,
 } from '../../types/post';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubSub = new PubSub();
 
 const postResolver = {
   Query: {
@@ -68,6 +72,7 @@ const postResolver = {
           data: { ...input, slug: newSlug, authorId: user.id },
           include: { author: true },
         });
+        pubSub.publish(NEW_POST, { postCreated: post });
         return post;
       } else {
         const post = await prisma.post.create({
@@ -135,6 +140,14 @@ const postResolver = {
       } catch (error) {
         throw new ApolloError(error.message);
       }
+    },
+  },
+
+  Subscription: {
+    postCreated: {
+      subscribe: () => {
+        pubSub.asyncIterator(NEW_POST);
+      },
     },
   },
 };
