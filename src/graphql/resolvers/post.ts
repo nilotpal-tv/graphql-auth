@@ -146,7 +146,7 @@ const postResolver = {
   Subscription: {
     postCreated: {
       subscribe: () => {
-        pubSub.asyncIterator(NEW_POST);
+        return pubSub.asyncIterator(NEW_POST);
       },
     },
   },

@@ -20,7 +20,7 @@ const server = new ApolloServer({ schema, context: authMiddleware });
 
 const wsServer = new WebSocketServer({
   server: httpServer,
-  path: `/${server.graphqlPath}`,
+  path: `${server.graphqlPath}`,
 });
 useWsServer({ schema }, wsServer);
 
