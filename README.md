@@ -18,4 +18,18 @@ To run the project:
 
 ```bash
 yarn dev
+
+or
+
+npm run dev
+```
+
+To build the project run:
+
+```bash
+yarn build
+
+or
+
+npm run build
 ```
