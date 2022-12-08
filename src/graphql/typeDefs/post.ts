@@ -52,7 +52,7 @@ const postTypeDefs = gql`
   }
 
   type Subscription {
-    postCreated: Post
+    postCreated: Post!
   }
 `;
 

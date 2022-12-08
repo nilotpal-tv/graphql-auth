@@ -1,7 +1,6 @@
-import { ApolloError, AuthenticationError } from 'apollo-server-express';
-import isObjectID from 'bson-objectid';
-import slug from 'slug';
-import { v4 as uuid } from 'uuid';
+import { PubSub } from 'graphql-subscriptions';
+import postService from '../../services/post.service';
+import userService from '../../services/user.service';
 import GraphQLContext from '../../types/context';
 import {
   CreatePostInput,
@@ -10,7 +9,6 @@ import {
   Post,
   UpdatePostInput,
 } from '../../types/post';
-import { PubSub } from 'graphql-subscriptions';
 
 const pubSub = new PubSub();
 
@@ -19,28 +17,21 @@ const postResolver = {
     postById: async (
       _: any,
       { id }: { id: string },
-      { prisma }: GraphQLContext
+      { user }: GraphQLContext
     ): Promise<Post> => {
-      if (!id) throw new ApolloError('Id is required.');
-      if (!isObjectID.isValid(id)) throw new ApolloError('Provide a valid id.');
-
-      const post = await prisma.post.findUnique({
-        where: { id },
-        include: { author: true },
-      });
-      return post as Post;
+      userService.checkIfLoggedIn(user);
+      const post = await postService.postById(id);
+      return post;
     },
 
     postsByText: async (
       _: any,
       { text }: { text: string },
-      { prisma }: GraphQLContext
-    ) => {
-      const post = await prisma.post.findMany({
-        where: { title: { contains: text, mode: 'insensitive' } },
-        include: { author: true },
-      });
-      return post;
+      { user }: GraphQLContext
+    ): Promise<Post[]> => {
+      userService.checkIfLoggedIn(user);
+      const posts = await postService.postsByText(text);
+      return posts;
     },
 
     posts: async (
@@ -57,89 +48,31 @@ const postResolver = {
     createPost: async (
       _: any,
       { input }: CreatePostInput,
-      { user, prisma }: GraphQLContext
+      { user }: GraphQLContext
     ): Promise<Post> => {
-      if (!user) throw new AuthenticationError('You must login.');
-
-      const uniqueSlug = slug(input.title);
-      const existPost = await prisma.post.findUnique({
-        where: { slug: uniqueSlug },
-      });
-
-      if (existPost) {
-        const newSlug = `${slug(input.title)}_${uuid()}`;
-        const post = await prisma.post.create({
-          data: { ...input, slug: newSlug, authorId: user.id },
-          include: { author: true },
-        });
-        pubSub.publish(NEW_POST, { postCreated: post });
-        return post;
-      } else {
-        const post = await prisma.post.create({
-          data: { ...input, slug: slug(input.title), authorId: user.id },
-          include: { author: true },
-        });
-        return post;
-      }
+      userService.checkIfLoggedIn(user);
+      const post = await postService.createPost(input, user);
+      return post;
     },
 
     updatePost: async (
       _: any,
-      { input }: UpdatePostInput,
-      { user, prisma }: GraphQLContext
+      args: UpdatePostInput,
+      { user }: GraphQLContext
     ) => {
-      if (!user) throw new AuthenticationError('You must login.');
-
-      if (!input.body || !input.id)
-        throw new ApolloError('All fields are required.');
-
-      if (!isObjectID.isValid(input.id))
-        throw new ApolloError('Invalid post id.');
-
-      try {
-        const post = await prisma.post.findUnique({
-          where: { id: input.id },
-          include: { author: true },
-        });
-
-        if (!post) throw new ApolloError("Post doesn't exist.", '404');
-        if (post.authorId.toString() !== user.id.toString())
-          throw new ApolloError("You can't update other user's post.", '400');
-
-        const updatedPost = await prisma.post.update({
-          where: { id: post.id },
-          data: { body: input.body },
-          include: { author: true },
-        });
-
-        return updatedPost;
-      } catch (error) {
-        throw new ApolloError(error.message);
-      }
+      userService.checkIfLoggedIn(user);
+      const updatedPost = await postService.updatePost(args, user);
+      return updatedPost;
     },
 
     deletePost: async (
       _: any,
       { input }: DeletePostInput,
-      { user, prisma }: GraphQLContext
-    ) => {
-      if (!user) throw new AuthenticationError('You must login.');
-
-      if (!isObjectID.isValid(input.id))
-        throw new ApolloError('Invalid post id.');
-
-      try {
-        const post = await prisma.post.findUnique({ where: { id: input.id } });
-        if (!post) throw new ApolloError("Post doesn't exist.", '404');
-
-        if (post.authorId.toString() !== user.id.toString())
-          throw new ApolloError("You can't delete other user's post.", '400');
-
-        await prisma.post.delete({ where: { id: input.id } });
-        return { success: true };
-      } catch (error) {
-        throw new ApolloError(error.message);
-      }
+      { user }: GraphQLContext
+    ): Promise<{ success: boolean }> => {
+      userService.checkIfLoggedIn(user);
+      await postService.deletePost(input.id, user.id);
+      return { success: true };
     },
   },
 
