@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { ExpressContext } from 'apollo-server-express';
-import { verifyToken } from '../lib/jwt';
+import tokenService from '../services/token.service';
 import GraphQLContext from '../types/context';
 
 const prisma = new PrismaClient();
@@ -14,7 +14,7 @@ const authMiddleware = async (
 
   try {
     const token = Bearer.split(' ')[1];
-    const payload = verifyToken(token);
+    const payload = tokenService.verifyToken(token);
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },
     });
