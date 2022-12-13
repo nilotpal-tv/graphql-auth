@@ -52,6 +52,7 @@ const postResolver = {
     ): Promise<Post> => {
       userService.checkIfLoggedIn(user);
       const post = await postService.createPost(input, user);
+      pubSub.publish(NEW_POST, { postCreated: post });
       return post;
     },
 
