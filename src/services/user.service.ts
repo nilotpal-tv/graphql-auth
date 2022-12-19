@@ -20,9 +20,9 @@ class UserService {
     if (!user || !user.id) throw new AuthenticationError('You need to login.');
   }
 
-  async findById(id: string): Promise<User> {
-    if (!id) throw new ApolloError('Id is a required attribute.', '400');
-    const user = await this.#prisma.user.findUnique({ where: { id } });
+  async findByEmail(email: string): Promise<User> {
+    if (!email) throw new ApolloError('Email is a required attribute.', '400');
+    const user = await this.#prisma.user.findUnique({ where: { email } });
     return user;
   }
 

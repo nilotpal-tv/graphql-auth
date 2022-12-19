@@ -51,7 +51,7 @@ const userTypeDefs = gql`
   }
 
   type Query {
-    user(email: String!): User!
+    user(email: String!): User
   }
 
   type Mutation {

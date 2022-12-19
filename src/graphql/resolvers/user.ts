@@ -9,8 +9,8 @@ import {
 
 const userResolver = {
   Query: {
-    user: async (_: any, { id }: { id: string }): Promise<User> =>
-      userService.findById(id),
+    user: async (_: any, { email }: { email: string }): Promise<User> =>
+      userService.findByEmail(email),
   },
 
   Mutation: {
