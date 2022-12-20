@@ -9,14 +9,6 @@ const userTypeDefs = gql`
     password: String!
   }
 
-  type Post {
-    id: String!
-    slug: String!
-    title: String!
-    body: String!
-    authorId: String!
-  }
-
   type RegisterUserResponse {
     id: String!
     email: String!

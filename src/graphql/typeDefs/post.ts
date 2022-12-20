@@ -9,18 +9,6 @@ const postTypeDefs = gql`
     author: User!
   }
 
-  type User {
-    id: String!
-    email: String!
-    lastName: String!
-    firstName: String!
-  }
-
-  type Query {
-    post(id: String!): Post!
-    posts: [Post]!
-  }
-
   input CreatePostInput {
     title: String!
     body: String!
