@@ -1,0 +1,12 @@
+FROM node:18-alpine3.14
+WORKDIR  /YOUR_WORKING_DIRECTORY
+COPY package*.json .
+RUN yarn
+COPY . .
+ENV PORT=4000
+ENV ACCESS_TOKEN_SECRET=YOUR_JWT_SECRECT
+ENV DATABASE_URL=YOUR_MONGO_URL
+RUN npx prisma db push --schema="src/prisma/schema.prisma"
+RUN npx prisma generate --schema="src/prisma/schema.prisma"
+EXPOSE 4000
+CMD [ "npm", "run", "dev" ]
